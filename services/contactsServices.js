@@ -1,4 +1,3 @@
-import { log } from "console";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -8,6 +7,7 @@ async function listContacts() {
   try {
     const contacts = await fs.readFile(contactsPath);
     return JSON.parse(contacts);
+    console.table(contacts);
   } catch (error) {
     console.log(error.message);
   }
@@ -55,7 +55,7 @@ async function addContact(name, email, phone) {
 
 export const updateContactById = async (id, body) => {
   try {
-    const list = await getListContacts();
+    const list = await listContacts();
     const index = list.findIndex((el) => el.id === id);
     if (index === -1) {
       return null;
