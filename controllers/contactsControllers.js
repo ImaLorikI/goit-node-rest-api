@@ -16,28 +16,34 @@ export const getAllContacts = async (req, res) => {
   }
 };
 
+
 export const getOneContact = async (req, res) => {
   const { id } = req.params;
   const getUser = await getContactById(id);
+
   if (!getUser) {
-    res.status(404).json({ message: "Not found" });
+    return res.status(404).json({ message: "Not found" });
   }
-  res.json(getUser);
+
+  return res.status(200).json(getUser);
 };
 
 export const deleteContact = async (req, res) => {
   const { id } = req.params;
   const removeContacted = await removeContact(id);
-  console.log(`deleted:${id}`);
   if (!removeContacted) {
     return res.status(404).json({ message: "Not found" });
   }
-  res.json(removeContacted);
+  res.json(removeContacted).status(200);
 };
 
 export const createContact = async (req, res) => {
-  const createNewContact = await addContact(req.body);
-  res.status(201).json(createNewContact);
+  const dataNewContact = req.body;
+  const newContact = await addContact(dataNewContact);
+  if (!newContact) {
+    return res.status(400).json({ message: "Contact not created" });
+  }
+  res.status(201).json(newContact);
 };
 
 export const updateContact = async (req, res) => {

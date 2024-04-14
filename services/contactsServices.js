@@ -7,7 +7,6 @@ async function listContacts() {
   try {
     const contacts = await fs.readFile(contactsPath);
     return JSON.parse(contacts);
-    console.table(contacts);
   } catch (error) {
     console.log(error.message);
   }
