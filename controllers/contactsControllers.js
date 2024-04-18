@@ -25,7 +25,7 @@ export const getOneContact = async (req, res, next) => {
     res.json(getOne).status(200);
   } catch (error) {
     console.log(error);
-    res.json({ message: "Contact not found" }).status(404);
+    res.status(404).json({ message: "Not found" });
   }
 };
 
@@ -42,7 +42,7 @@ export const createContact = async (req, res) => {
   try {
     const newUser = await Contacts.create(req.body);
     if (!newUser) {
-      return res.status(400).json({ message: "Contact not created" });
+      return res.status(400).json({ message: "Not found" });
     }
     res.status(201).json(newUser);
   } catch (error) {
@@ -51,17 +51,18 @@ export const createContact = async (req, res) => {
   }
 };
 
-export const updateContact = async (req, res, next) => {
-  try {
-    const update = await Contacts.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    res.json(update).status(200);
-  } catch (error) {
-    console.log(error);
-    res.status(404).json({ message: "Contact not updated" });
-  }
+export const updateContact = async (req, res) => {
+try {
+  const update = await Contacts.findByIdAndUpdate(req.params.id, req.body);
+  res.json(update).status(200);
+} catch (error) {
+  console.log(error);
+  res.status(404).json({ message: "Not found" });
+ 
+}
 };
+
+
 export const updateStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -74,3 +75,4 @@ export const updateStatus = async (req, res, next) => {
     res.status(404).json({ message: "Not found" });
   }
 };
+
