@@ -1,5 +1,4 @@
 import { promises as fs } from "fs";
-import { nanoid } from "nanoid";
 import path from "path";
 
 const contactsPath = path.join("db", "contacts.json");
@@ -45,7 +44,6 @@ const addContact = async (body) => {
   try {
     const list = await listContacts();
     const newContact = {
-      id: nanoid(),
       ...body,
     };
     list.push(newContact);
