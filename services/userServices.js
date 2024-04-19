@@ -7,7 +7,6 @@ import HttpError from "../helpers/HttpError.js";
 export const signupUser = async (userData) => {
   const newUser = await User.create({
     ...userData,
-    subscription: "starter",
   });
   newUser.password = undefined;
 

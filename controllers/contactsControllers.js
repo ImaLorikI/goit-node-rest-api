@@ -4,7 +4,8 @@ import { Contacts } from "../models/contacts.js";
 
 export const getAllContacts = async (req, res) => {
   try {
-    const getUsers = await Contacts.find();
+    const owner = req.user.id; 
+    const getUsers = await Contacts.find({ owner });
     res.status(200).json(getUsers);
   } catch (error) {
     console.log(error);
@@ -33,13 +34,12 @@ export const deleteContact = async (req, res) => {
 
 export const createContact = async (req, res) => {
   try {
-    const newUser = await Contacts.create(req.body);
-    if (!newUser) {
-      return res.status(400).json({ message: "Contact not created" });
-    }
-    res.status(201).json(newUser);
+    const owner = req.user.id; 
+    const newContact = { ...req.body, owner }; 
+    const createdContact = await Contacts.create(newContact);
+    res.status(201).json(createdContact);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(400).json({ message: "Bad request" });
   }
 };
