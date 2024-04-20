@@ -2,6 +2,15 @@ import HttpError from "../helpers/HttpError.js";
 import { checkToken } from "../services/jwtServices.js";
 import { User } from "../models/user.js";
 import catchAsync from "../helpers/catchAsync.js";
+import { isValidObjectId } from "mongoose";
+
+export const isValidId = (req, res, next) => {
+  const { id } = req.params;
+  if (!isValidObjectId(id)) {
+    next(new HttpError(400, `${id} is not valid id!`));
+  }
+  next();
+};
 
 export const authenticate = catchAsync(async (req, res, next) => {
   const token = req.headers.authorization
