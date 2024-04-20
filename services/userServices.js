@@ -48,8 +48,8 @@ export const updateAvatarById = async (userData, user, file) => {
       file,
       {
         maxFileSize: 2,
-        width: 200,
-        height: 200,
+        width: 250,
+        height: 250,
       },
       "avatars"
     );
