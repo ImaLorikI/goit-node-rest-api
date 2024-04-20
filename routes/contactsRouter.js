@@ -18,7 +18,6 @@ import authenticate, { isValidId } from "../middlewares/authMiddlewares.js";
 const contactsRouter = express.Router();
 
 contactsRouter.use(authenticate);
-
 contactsRouter.use("/:id", isValidId);
 
 
