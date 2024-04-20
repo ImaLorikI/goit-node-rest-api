@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { signToken } from "../services/jwtServices.js";
 import { User } from "../models/user.js";
 import HttpError from "../helpers/HttpError.js";
+import { ImageService } from "./imageService.js";
 
 
 export const signupUser = async (userData) => {
@@ -40,3 +41,26 @@ export async function findUserById(id) {
   const user = await User.findById(id);
   return user;
 }
+
+export const updateAvatarById = async (userData, user, file) => {
+  if (file) {
+    user.avatarURL = await ImageService.saveImage(
+      file,
+      {
+        maxFileSize: 2,
+        width: 200,
+        height: 200,
+      },
+      "avatars"
+    );
+  }
+
+  Object.keys(userData).forEach((key) => {
+    user[key] = userData[key];
+  });
+
+  return user.save();
+};
+
+
+

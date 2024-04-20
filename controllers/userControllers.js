@@ -1,6 +1,6 @@
 import catchAsync from "../helpers/catchAsync.js";
 import HttpError from "../helpers/HttpError.js";
-import { signupUser, loginUser } from "../services/userServices.js";
+import { signupUser, loginUser, updateAvatarById } from "../services/userServices.js";
 import { generateHash } from "../services/userServices.js";
 import { User } from "../models/user.js";
 
@@ -53,4 +53,11 @@ export const logoutUser = catchAsync(async (req, res) => {
   const { id } = req.user;
   await User.findByIdAndUpdate(id, { token: null });
   res.status(204).send();
+});
+
+export const updateAvatar = catchAsync(async (req, res) => {
+  const updatedUser = await updateAvatarById(req.body, req.user, req.file);
+   res.status(200).json({
+     avatarURL: updatedUser.avatarURL
+   });
 });
