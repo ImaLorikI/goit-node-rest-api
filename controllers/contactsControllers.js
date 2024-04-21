@@ -4,7 +4,7 @@ import { Contacts } from "../models/contacts.js";
 
 export const getAllContacts = async (req, res) => {
   try {
-    const owner = req.user.id; 
+    const owner = req.user.id;
     const getUsers = await Contacts.find({ owner });
     res.status(200).json(getUsers);
   } catch (error) {
@@ -41,8 +41,8 @@ export const deleteContact = async (req, res) => {
 
 export const createContact = async (req, res) => {
   try {
-    const owner = req.user.id; 
-    const newContact = { ...req.body, owner }; 
+    const owner = req.user.id;
+    const newContact = { ...req.body, owner };
     const createdContact = await Contacts.create(newContact);
     res.status(201).json(createdContact);
   } catch (error) {
@@ -53,7 +53,15 @@ export const createContact = async (req, res) => {
 
 export const updateContact = async (req, res) => {
   try {
-    const update = await Contacts.findByIdAndUpdate(req.params.id, req.body);
+    const update = await Contacts.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (Object.keys(req.body).length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Body must have at least one field" });
+    }
+    
     if (!update) {
       return res.status(400).json({ message: "Not found" });
     }
