@@ -27,6 +27,9 @@ export const getOneContact = async (req, res, next) => {
 export const deleteContact = async (req, res) => {
   try {
     const deleteContact = await Contacts.findByIdAndDelete(req.params.id);
+    if (!deleteContact) {
+      return res.status(404).json({ message: "Not found" });
+    }
     res.json(deleteContact).status(200);
   } catch (error) {
     console.log(error);
@@ -48,7 +51,12 @@ export const createContact = async (req, res) => {
 
 export const updateContact = async (req, res) => {
 try {
-  const update = await Contacts.findByIdAndUpdate(req.params.id, req.body);
+  const update = await Contacts.findByIdAndUpdate(req.params.id, req.body, { new: true });
+   if (Object.keys(req.body).length === 0) {
+     return res
+       .status(400)
+       .json({ message: "Body must have at least one field" });
+   }
   if (!update) {
     return res.status(400).json({ message: "Not found" });
   }
