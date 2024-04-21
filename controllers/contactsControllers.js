@@ -53,7 +53,13 @@ export const createContact = async (req, res) => {
 
 export const updateContact = async (req, res) => {
   try {
-    const update = await Contacts.findByIdAndUpdate(req.params.id, req.body);
+    const update = await Contacts.findByIdAndUpdate(req.params.id, req.body,{new:true});
+    if (Object.keys(req.body).length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Body must have at least one field" });
+    }
+
     if (!update) {
       return res.status(400).json({ message: "Not found" });
     }
