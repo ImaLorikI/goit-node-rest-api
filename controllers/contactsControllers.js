@@ -15,12 +15,12 @@ export const getAllContacts = async (req, res) => {
 export const getOneContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const getOne = await Contacts.findById(id);
-    if (!getOne) {
+    const owner = req.user.id;
+    const get = await Contacts.findOne({ _id: id, owner });
+    if (!get) {
       return res.status(404).json({ message: "Not found" });
     }
-
-    res.json(getOne).status(200);
+    res.status(200).json(get);
   } catch (error) {
     console.log(error);
     res.json({ message: "Contact not found" }).status(404);
@@ -29,13 +29,16 @@ export const getOneContact = async (req, res, next) => {
 
 export const deleteContact = async (req, res) => {
   try {
-    const deleteContact = await Contacts.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
+    const owner = req.user.id;
+    const deleteContact = await Contacts.findOneAndDelete({ _id: id, owner });
     if (!deleteContact) {
       return res.status(404).json({ message: "Not found" });
     }
     res.json(deleteContact).status(200);
   } catch (error) {
     console.log(error);
+    res.status(404).json({ message: "Not found" });
   }
 };
 
@@ -53,15 +56,21 @@ export const createContact = async (req, res) => {
 
 export const updateContact = async (req, res) => {
   try {
-    const update = await Contacts.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const { id } = req.params;
+    const owner = req.user.id;
+
+    const update = await Contacts.findOneAndUpdate(
+      { _id: id, owner },
+      { ...req.body },
+      { new: true }
+    );
+
     if (Object.keys(req.body).length === 0) {
       return res
         .status(400)
         .json({ message: "Body must have at least one field" });
     }
-    
+
     if (!update) {
       return res.status(400).json({ message: "Not found" });
     }
@@ -75,9 +84,13 @@ export const updateContact = async (req, res) => {
 export const updateStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const update = await Contacts.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    const owner = req.user.id;
+    const update = await Contacts.findOneAndUpdate(
+      { _id: id, owner },
+      { favorite: req.body.favorite },
+      { new: true }
+    );
+
     if (!update) {
       return res.status(404).json({ message: "Not found" });
     }
