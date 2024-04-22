@@ -62,5 +62,3 @@ export const updateAvatarById = async (userData, user, file) => {
   return user.save();
 };
 
-
-

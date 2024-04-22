@@ -48,6 +48,8 @@ export class ImageService {
       .cover(options?.width || 250, options?.height || 250)
       .quality(90)
       .writeAsync(fullFilePath);
+    await fse.remove(tmpFilePath);
+
 
     // await fs.promises.writeFile(fullFilePath, file.buffer);
 

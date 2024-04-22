@@ -22,6 +22,6 @@ authRouter.get("/current", authenticate, getCurrent);
 
 authRouter.post("/logout", authenticate, logoutUser);
 
-authRouter.patch("/avatar", authenticate, uploadAvatar, updateAvatar);
+authRouter.patch("/avatars", authenticate, uploadAvatar, updateAvatar);
 
 export default authRouter;

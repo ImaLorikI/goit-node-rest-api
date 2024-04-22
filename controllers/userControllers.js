@@ -56,6 +56,9 @@ export const logoutUser = catchAsync(async (req, res) => {
 });
 
 export const updateAvatar = catchAsync(async (req, res) => {
+if (!req.file) {
+    throw new HttpError(400, "Please, upload an image");
+  }
   const updatedUser = await updateAvatarById(req.body, req.user, req.file);
    res.status(200).json({
      avatarURL: updatedUser.avatarURL
