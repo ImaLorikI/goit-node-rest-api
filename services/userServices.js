@@ -27,6 +27,10 @@ export const loginUser = async ({ email, password }) => {
 
   const token = signToken(user.id);
 
+   if (!user.verify) {
+     throw new HttpError(400, "Email is not verified");
+   }
+
   return { user, token };
 };
 
