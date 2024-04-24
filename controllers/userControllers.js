@@ -1,6 +1,10 @@
 import catchAsync from "../helpers/catchAsync.js";
 import HttpError from "../helpers/HttpError.js";
-import { signupUser, loginUser, updateAvatarById } from "../services/userServices.js";
+import {
+  signupUser,
+  loginUser,
+  updateAvatarById,
+} from "../services/userServices.js";
 import { generateHash } from "../services/userServices.js";
 import { User } from "../models/user.js";
 import { nanoid } from "nanoid";
@@ -18,10 +22,14 @@ export const registerUser = catchAsync(async (req, res) => {
     to: email,
     subject: "Verify your email",
     html: `<a href="http://localhost:3000/users/verify/${verificationToken}">Click here to verify your email</a>`,
-  }
-  
+  };
+
   await sendEmail(mail);
-  const result = await signupUser({ ...req.body, password: hashedPassword, verificationToken});
+  const result = await signupUser({
+    ...req.body,
+    password: hashedPassword,
+    verificationToken,
+  });
 
   res.status(201).json({
     user: {
@@ -36,7 +44,7 @@ export const login = catchAsync(async (req, res) => {
   const { user, token } = await loginUser({ email, password });
 
   await User.findByIdAndUpdate(user.id, { token });
-  
+
   res.status(200).json({
     token,
     user: {
@@ -46,14 +54,12 @@ export const login = catchAsync(async (req, res) => {
   });
 });
 
-
 export const getCurrent = catchAsync(async (req, res) => {
-    const { email, subscription } = req.user;
-    res.status(200).json({
-      email,
-      subscription,
-    });
-
+  const { email, subscription } = req.user;
+  res.status(200).json({
+    email,
+    subscription,
+  });
 });
 
 export const logoutUser = catchAsync(async (req, res) => {
@@ -63,13 +69,13 @@ export const logoutUser = catchAsync(async (req, res) => {
 });
 
 export const updateAvatar = catchAsync(async (req, res) => {
-if (!req.file) {
+  if (!req.file) {
     throw new HttpError(400, "Please, upload an image");
   }
   const updatedUser = await updateAvatarById(req.body, req.user, req.file);
-   res.status(200).json({
-     avatarURL: updatedUser.avatarURL
-   });
+  res.status(200).json({
+    avatarURL: updatedUser.avatarURL,
+  });
 });
 
 export const verifyEmail = catchAsync(async (req, res) => {
@@ -78,14 +84,17 @@ export const verifyEmail = catchAsync(async (req, res) => {
   if (!user) {
     throw new HttpError(404, "User not found");
   }
-  await User.findByIdAndUpdate(user.id, { verificationToken: null,verify: true});
-  res.status(200).send("Verification successful");
-
+  await User.findByIdAndUpdate(user.id, {
+    verificationToken: null,
+    verify: true,
+  });
+  res.status(200).json({
+    message: "Verification successful",
+  });
 });
 
 export const resendVerifyEmail = catchAsync(async (req, res) => {
   const { email } = req.body;
-
 
   const user = await User.findOne({ email });
   if (!user) {
@@ -94,11 +103,11 @@ export const resendVerifyEmail = catchAsync(async (req, res) => {
   if (user.verify) {
     throw new HttpError(400, "Verification has already been passed");
   }
-const mail = {
+  const mail = {
     to: email,
     subject: "Verify your email",
     html: `<a href="http://localhost:3000/users/verify/${user.verificationToken}">Click here to verify your email</a>`,
-  }
+  };
   await sendEmail(mail);
 
   res.status(200).json({
